@@ -10,32 +10,37 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.germantest.model.BrowseApi
-import com.example.germantest.model.Post
 import com.example.germantest.model.TestItem
 import com.example.germantest.network.RetrofitInstance
 
 
 
 @Composable
-fun BrowsePage(modifier: Modifier = Modifier, searchValue: (String)) {
-    val api = RetrofitInstance.create("http://10.0.2.2:5000")
+fun BrowsePage(modifier: Modifier = Modifier, searchValue: String) {
+    val api = RetrofitInstance.create("http://10.38.33.91:5000")
 
     var posts: List<TestItem> by remember { mutableStateOf<List<TestItem>>(emptyList()) }
-    // Fetch posts directly from the UI
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect(searchValue) {
         try {
             val response = api.getPosts("/b/browse/$searchValue")
-            posts = response.tests  // update state so LazyColumn recomposes
+            posts = response.tests[0]
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(posts) { post ->
-            Text(text = post.title)
+    LazyColumn(modifier = modifier.fillMaxSize()) {
+        if (posts.isNotEmpty()) {
+            items(posts) { post ->
+                Text(text = post.title)
+            }
+        } else {
+            item {
+                Text(text = "Search $searchValue")
+            }
         }
     }
+
 
 }

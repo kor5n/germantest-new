@@ -18,7 +18,7 @@ data class TestItem(
 
 data class BrowseApi(
     val message: String,
-    val tests: List<TestItem>,
+    val tests: List<List<TestItem>>,
     val loggedIn: Boolean,
     val authors: List<String>,
 )
